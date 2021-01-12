@@ -4,7 +4,7 @@ namespace=${1:-dxos}
 input="./gen/$namespace.txt"
 root="./projects/$namespace"
 
-mkdir -p $dir
+mkdir -p $root
 
 git config --global init.defaultBranch main
 
@@ -35,7 +35,7 @@ function migrate() {
   git commit -a -m "Migration to Radical."
 
   # Clean-up comments
-  npx @dxos/fu@1.0.8 strip --dir="**/+\(src\|stories\)" --replace --verbose
+  npx @dxos/fu@1.0.11 strip --dir='**/+\(src\|stories\)' --replace --verbose
 
   # TODO(burdon): Lint fix (for each package).
 
