@@ -36,8 +36,9 @@ function clone() {
   git commit -a -m "Initial commit"
 
   # Strip comments (npx)
-  # TODO(burdon): fu breaks for multi-line comments.
-  npx @dxos/fu strip --dir=.
+  npx @dxos/fu@1.0.8 strip --dir="**/+\(src\|stories\)" --replace --verbose
+
+  # TODO(burdon): Lint fix (for each package).
 
   popd
 
