@@ -86,4 +86,6 @@ async function cleanPackage(dir) {
       
     }
   }
+
+  await execa('node_modules/.bin/fu', ['strip', "--dir='**/+\(src\|stories\)", '--replace', '--verbose'])
 }
