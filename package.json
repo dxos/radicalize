@@ -1,0 +1,12 @@
+{
+  "name": "radicalize",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/dxos/radicalize",
+  "author": "Dmytro Maretskyi <maretskii@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "execa": "^5.0.0",
+    "mkdirp": "^1.0.4"
+  }
+}

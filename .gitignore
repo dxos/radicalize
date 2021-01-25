@@ -1,3 +1,5 @@
 .github
 .idea
 
+node_modules
+gen
