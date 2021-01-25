@@ -5,13 +5,12 @@ const {join} = require('path')
 const mkdirp = require('mkdirp')
 const execa = require('execa')
 
-; (async () => {
-  const [
-    list = './gen/dxos.txt',
-    outDir = './gen'
-  ] = process.argv.slice(2)
+const [
+  list = './gen/dxos.txt',
+  outDir = './gen'
+] = process.argv.slice(2)
 
-  console.log({ list, outDir })
+; (async () => {
 
   const repos = fs.readFileSync(list, { encoding: 'utf-8' }).split('\n').filter(Boolean);
 
@@ -29,22 +28,10 @@ const execa = require('execa')
       if(rootPkgJson.workspaces)  {
         const packages = await getWorkspacePackages(destination);
         for(const package of packages) {
-          console.log(`Copy ${package.name}`)
-          const packagePath = join(outDir, 'packages', cleanPkgName(package.name))
-          mkdirp.sync(packagePath)
-          await execa('cp', ['-r', join(destination, package.location), packagePath])
-
-          console.log(`Clean ${package.name}`)
-          await cleanPackage(packagePath)
+          await processPackage(join(destination, package.location), package.name)
         }
       } else {
-        const packagePath = join(outDir, 'packages', cleanPkgName(rootPkgJson.name))
-        console.log(`Copy ${rootPkgJson.name}`)
-        mkdirp.sync(packagePath)
-        await execa('cp', ['-r', destination, packagePath])
-
-        console.log(`Clean ${rootPkgJson.name}`)
-        await cleanPackage(packagePath)
+        await processPackage(destination, rootPkgJson.name)
       }
     } catch(err) {
       console.error(err)
@@ -54,6 +41,17 @@ const execa = require('execa')
     await execa('rm', ['-r', join(outDir, 'checkout')])
   }
 })()
+
+async function processPackage(sourcePath, name) {
+  const packagePath = join(outDir, 'packages', cleanPkgName(name))
+
+  console.log(`Copy ${name}`)
+  mkdirp.sync(packagePath)
+  await execa('cp', ['-r', sourcePath, packagePath])
+
+  console.log(`Clean ${name}`)
+  await cleanPackage(packagePath)
+}
 
 async function getWorkspacePackages(dir) {
   let {stdout} = await execa('yarn', ['workspaces', 'info'], { cwd: dir })
