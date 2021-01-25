@@ -47,7 +47,7 @@ async function processPackage(sourcePath, name) {
 
   console.log(`Copy ${name}`)
   mkdirp.sync(packagePath)
-  await execa('cp', ['-r', sourcePath, packagePath])
+  await execa('cp', ['-r', `${sourcePath}/.`, packagePath])
 
   console.log(`Clean ${name}`)
   await cleanPackage(packagePath)
@@ -90,5 +90,5 @@ async function cleanPackage(dir) {
     }
   }
 
-  await execa('node_modules/.bin/fu', ['strip', "--dir='**/+\(src\|stories\)", '--replace', '--verbose'])
+  await execa(require.resolve('@dxos/fu/bin/fu.js'), ['strip', "--dir='**/+\(src\|stories\)", '--replace', '--verbose'], { cwd: dir })
 }
