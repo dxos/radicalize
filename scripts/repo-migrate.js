@@ -51,6 +51,11 @@ async function processPackage(sourcePath, name) {
 
   console.log(`Clean ${name}`)
   await cleanPackage(packagePath)
+
+  console.log(`Init git ${name}`)
+  await execa('git', ['init'], { cwd: packagePath })
+  await execa('git', ['add', '-A'], { cwd: packagePath })
+  await execa('git', ['commit', '-m', 'Migration to Radical.'], { cwd: packagePath })
 }
 
 async function getWorkspacePackages(dir) {
