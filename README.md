@@ -7,6 +7,7 @@ Utils to migrate Github repos to Radicle.
 ```bash
 ▶ ./radicalize/scripts/repo-list.sh dxos
 ▶ ./radicalize/scripts/repo-migrate.sh dxos
+▶ ./radicalize/scripts/repo-migrate.js
 ```
 
 ## Setup
@@ -38,3 +39,9 @@ Query repos:
 ```bash
 ▶ gh repos dxos
 ```
+
+## Dumping packages
+
+1. Create a repo list at `./gen/dxos.txt`.
+1. Run `./scripts/repo-migrate.js`.
+1. `./gen/packages` will contain all dumped packages.
