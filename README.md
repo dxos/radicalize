@@ -53,3 +53,8 @@ Query repos:
 1. Create a repo list at `./gen/dxos.txt`.
 1. Run `./scripts/repo-migrate.js`.
 1. `./gen/packages` will contain all dumped packages.
+
+## Importing repo into radical
+
+1. Have radical desktop client running
+1. `RAD_PASSPHRASE=<your passphrase> ./scripts/rad-import.js ./gen/packages/echo-demo`
