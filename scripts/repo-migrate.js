@@ -23,6 +23,11 @@ const [
       console.log(`Clone ${repo}`)
       await execa('gh', ['repo', 'clone', repo, destination, '--', '--depth=1'])
 
+      if (!fs.existsSync(join(destination, 'package.json'))) {
+        await processPackage(destination, repo.replace('dxos/', ''))
+        continue;
+      }
+
       const rootPkgJson = JSON.parse(fs.readFileSync(join(destination, 'package.json'), { encoding: 'utf-8' }))
 
       if(rootPkgJson.workspaces)  {
