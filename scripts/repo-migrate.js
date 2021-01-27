@@ -21,7 +21,7 @@ const [
     try {
       const destination = join(outDir, 'checkout', repo.split('/')[1])
       console.log(`Clone ${repo}`)
-      await execa('gh', ['repo', 'clone', repo, destination])
+      await execa('gh', ['repo', 'clone', repo, destination, '--', '--depth=1'])
 
       const rootPkgJson = JSON.parse(fs.readFileSync(join(destination, 'package.json'), { encoding: 'utf-8' }))
 
@@ -90,5 +90,5 @@ async function cleanPackage(dir) {
     }
   }
 
-  await execa(require.resolve('@dxos/fu/bin/fu.js'), ['strip', "--dir='**/+\(src\|stories\)", '--replace', '--verbose'], { cwd: dir })
+  await execa(require.resolve('@dxos/fu/bin/fu.js'), ['strip', "--dir='**/+\(src\|stories\|tests\)'", '--replace', '--verbose'], { cwd: dir })
 }

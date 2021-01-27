@@ -12,6 +12,14 @@ Utils to migrate Github repos to Radicle.
 
 ## Setup
 
+### Install NPM dependencies
+
+```bash
+yarn install
+```
+
+### Github CLI
+
 ```bash
 ▶ brew install gh
 ```
