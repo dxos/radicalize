@@ -92,6 +92,10 @@ async function processPackage(sourcePath, name) {
   mkdirp.sync(packagePath)
   await execa('cp', ['-r', `${sourcePath}/.`, packagePath])
 
+  console.log(`Replace licence ${name}`)
+  await execa('rm', ['-f', './LICENSE'], { cwd: packagePath })
+  await execa('cp', ['../../../../LICENSE', './'], { cwd: packagePath })
+
   console.log(`Clean ${name}`)
   await cleanPackage(packagePath)
 
