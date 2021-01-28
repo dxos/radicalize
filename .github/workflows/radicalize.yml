@@ -14,7 +14,7 @@ jobs:
       - name: Prepare gh CLI
         run: | 
           gh alias set repos "$(cat ./gh-alias-repos.txt)"
-          echo ${{ github.token }} | gh auth login --with-token
+          echo ${{ secrets.DXOS_ACCESS_TOKEN }} | gh auth login --with-token
       - name: Generate a list of dxos repositories
         run: ./repo-list.sh dxos
         working-directory: ./scripts
