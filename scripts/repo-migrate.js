@@ -54,13 +54,17 @@ async function preprocessMonorepo(path) {
   for(const package of await getWorkspacePackages(path)) {
     const pkgPath = join(path, package.location);
     if(fs.existsSync(join(pkgPath, 'tsconfig.json'))) {
-      const tsConfig = readJsonFile(join(pkgPath, 'tsconfig.json'))
+      let tsConfig = readJsonFile(join(pkgPath, 'tsconfig.json'))
 
       if(tsConfig.extends) {
         const extendingTsConfig = readJsonFile(resolve(pkgPath, tsConfig.extends))
-        tsConfig.compilerOptions = {
-          ...extendingTsConfig.compilerOptions,
-          ...tsConfig.compilerOptions,
+        tsConfig = {
+          ...extendingTsConfig,
+          ...tsConfig,
+          compilerOptions: {
+             ...extendingTsConfig.compilerOptions,
+            ...tsConfig.compilerOptions,
+          }
         }
         delete tsConfig.extends;
       }
