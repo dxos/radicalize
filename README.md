@@ -24,22 +24,10 @@ yarn install
 ▶ brew install gh
 ```
 
-Edit the configuration file:
+Add required alias:
 
-```yml
-# ~/.config/gh/config.yml
-aliases:
-    repos: |
-        !gh api --paginate graphql -f owner="$1" -f query='
-          query($owner: String!, $per_page: Int = 100, $endCursor: String) {
-            repositoryOwner(login: $owner) {
-              repositories(first: $per_page, after: $endCursor, ownerAffiliations: OWNER) {
-                nodes { nameWithOwner }
-                pageInfo { hasNextPage endCursor }
-              }
-            }
-          }
-        ' | jq -r '.data.repositoryOwner.repositories.nodes[].nameWithOwner' | sort
+```bash
+gh alias set repos "$(cat ./gh-alias-repos.txt)"
 ```
 
 Query repos:

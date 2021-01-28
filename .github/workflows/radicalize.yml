@@ -1,0 +1,38 @@
+name: Radicalize
+on:
+  push:
+
+jobs:
+  radicalize:
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - run: yarn install --frozen-lockfile
+
+      - name: Prepare gh CLI
+        run: | 
+          gh alias set repos "$(cat ./gh-alias-repos.txt)"
+          echo ${{ github.token }} | gh auth login --with-token
+      - name: Generate a list of dxos repositories
+        run: ./repo-list.sh dxos
+        working-directory: ./scripts
+      - name: Upload the packages list manifest
+        uses: actions/upload-artifact@v1
+        with:
+          name: packages-list
+          path: ./scripts/gen/dxos.txt
+
+      - name: Prepare the repositories for importing into radicle
+        run: ./repo-migrate.js
+        working-directory: ./scripts
+
+      - name: Remove .git from bundle before uploading
+        run: rm -r ./**/.git
+        working-directory: ./scripts/gen/packages
+      - name: Upload the packages bundle
+        uses: actions/upload-artifact@v1
+        with:
+          name: packages
+          path: ./scripts/gen/packages
