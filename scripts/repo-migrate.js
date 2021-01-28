@@ -30,7 +30,13 @@ const replacements = [
     try {
       const destination = join(outDir, 'checkout', repo.split('/')[1])
       console.log(`Clone ${repo}`)
-      await execa('gh', ['repo', 'clone', repo, destination, '--', '--depth=1'])
+      if (process.env.GITHUB_ACCESS_TOKEN) {
+        await execa('git', ['clone',
+        `https://${process.env.GITHUB_ACCESS_TOKEN}@github.com/${repo}.git`,
+        destination, '--depth=1'])
+      } else {
+        await execa('gh', ['repo', 'clone', repo, destination, '--', '--depth=1'])
+      }
 
       if (!fs.existsSync(join(destination, 'package.json'))) {
         await processPackage(destination, repo.replace('dxos/', ''))
