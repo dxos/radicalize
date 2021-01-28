@@ -32,7 +32,7 @@ const [
       const rootPkgJson = readJsonFile(join(destination, 'package.json'))
 
       if(rootPkgJson.workspaces)  {
-        preprocessMonorepo(destination);
+        await preprocessMonorepo(destination);
 
         const packages = await getWorkspacePackages(destination);
         for(const package of packages) {
