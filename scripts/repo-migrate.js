@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 
 const fs = require('fs')
-const {join} = require('path')
+const {join, resolve} = require('path')
 const mkdirp = require('mkdirp')
 const execa = require('execa')
+const ts = require('typescript')
 
 const [
   list = './gen/dxos.txt',
@@ -28,9 +29,11 @@ const [
         continue;
       }
 
-      const rootPkgJson = JSON.parse(fs.readFileSync(join(destination, 'package.json'), { encoding: 'utf-8' }))
+      const rootPkgJson = readJsonFile(join(destination, 'package.json'))
 
       if(rootPkgJson.workspaces)  {
+        preprocessMonorepo(destination);
+
         const packages = await getWorkspacePackages(destination);
         for(const package of packages) {
           await processPackage(join(destination, package.location), package.name)
@@ -46,6 +49,28 @@ const [
     await execa('rm', ['-r', join(outDir, 'checkout')])
   }
 })()
+
+async function preprocessMonorepo(path) {
+  for(const package of await getWorkspacePackages(path)) {
+    const pkgPath = join(path, package.location);
+    if(fs.existsSync(join(pkgPath, 'tsconfig.json'))) {
+      const tsConfig = readJsonFile(join(pkgPath, 'tsconfig.json'))
+
+      if(tsConfig.extends) {
+        const extendingTsConfig = readJsonFile(resolve(pkgPath, tsConfig.extends))
+        tsConfig.compilerOptions = {
+          ...extendingTsConfig.compilerOptions,
+          ...tsConfig.compilerOptions,
+        }
+        delete tsConfig.extends;
+      }
+
+      delete tsConfig.references;
+
+      writeJsonFile(join(pkgPath, 'tsconfig.json'), tsConfig)
+    }
+  }
+}
 
 async function processPackage(sourcePath, name) {
   const packagePath = join(outDir, 'packages', cleanPkgName(name))
@@ -96,4 +121,13 @@ async function cleanPackage(dir) {
   }
 
   await execa(require.resolve('@dxos/fu/bin/fu.js'), ['strip', "--dir='**/+\(src\|stories\|tests\)'", '--replace', '--verbose'], { cwd: dir })
+}
+
+function readJsonFile(path) {
+  let contents = fs.readFileSync(path, { encoding: 'utf-8' });
+  return ts.parseConfigFileTextToJson(path, contents).config
+}
+
+function writeJsonFile(path, contents) {
+  fs.writeFileSync(path, JSON.stringify(contents, null, 4))
 }
