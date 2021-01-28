@@ -66,7 +66,6 @@ async function preprocessMonorepo(path) {
             ...tsConfig.compilerOptions,
           }
         }
-
         delete tsConfig.extends;
       }
 
