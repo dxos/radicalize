@@ -14,7 +14,7 @@ do
   if test -f "$package/package.json"; then
     echo -e "\nBuilding $package"
     pushd $package > /dev/null
-    (yarn --silent && yarn build) && echo $package > $succ || echo $package > $fail
+    (yarn --silent && yarn build) && echo $package >> $succ || echo $package >> $fail
     popd > /dev/null
   fi
 done
