@@ -46,7 +46,7 @@ const [
     }
 
   }
-  
+
   console.log(`Delete ${join(outDir, 'checkout')}`)
   await execa('rm', ['-r', join(outDir, 'checkout')])
 })()
@@ -126,6 +126,24 @@ async function cleanPackage(dir) {
   }
 
   await execa(require.resolve('@dxos/fu/bin/fu.js'), ['strip', "--dir='**/+\(src\|stories\|tests\)'", '--replace', '--verbose'], { cwd: dir })
+
+  for(const file of readFilesRecursively(dir)) {
+    const contents = fs.readFileSync(file, { encoding: 'utf-8' })
+    const cleanedContents = contents.replace(/[a-zA-Z0-9\.]+dxos\.network/g, 'localhost');
+    if(cleanedContents !== contents) {
+      fs.writeFileSync(file, cleanedContents);
+    }
+  }
+}
+
+function* readFilesRecursively(dir) {
+  for(const filesName of fs.readdirSync(dir)) {
+    if(fs.statSync(join(dir, filesName)).isDirectory()) {
+      yield* readFilesRecursively(join(dir, filesName));
+    } else {
+      yield join(dir, filesName);
+    }
+  }
 }
 
 function readJsonFile(path) {
