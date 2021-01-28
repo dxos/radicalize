@@ -11,6 +11,14 @@ const [
   outDir = './gen'
 ] = process.argv.slice(2)
 
+const replacements = [
+  {search: /[a-zA-Z0-9\.]+dxos\.network/g, replace: 'localhost'},
+  {search: /wireline/g, replace: 'dxos'},
+  {search: /wire/g, replace: 'dx'},
+  {search: /wrn/g, replace: 'dxn'},
+  {search: /wns/g, replace: 'dxns'},
+]
+
 ; (async () => {
 
   const repos = fs.readFileSync(list, { encoding: 'utf-8' }).split('\n').filter(Boolean);
@@ -125,11 +133,15 @@ async function cleanPackage(dir) {
     }
   }
 
+  // strip comments
   await execa(require.resolve('@dxos/fu/bin/fu.js'), ['strip', "--dir='**/+\(src\|stories\|tests\)'", '--replace', '--verbose'], { cwd: dir })
 
   for(const file of readFilesRecursively(dir)) {
     const contents = fs.readFileSync(file, { encoding: 'utf-8' })
-    const cleanedContents = contents.replace(/[a-zA-Z0-9\.]+dxos\.network/g, 'localhost');
+    let cleanedContents = contents;
+    for (const replacement of replacements) {
+      cleanedContents = cleanedContents.replace(replacement.search, replacement.replace);
+    }
     if(cleanedContents !== contents) {
       fs.writeFileSync(file, cleanedContents);
     }
