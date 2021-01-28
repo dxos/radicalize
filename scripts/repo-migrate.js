@@ -45,9 +45,10 @@ const [
       console.error(err)
     }
 
-    console.log(`Delete ${join(outDir, 'checkout')}`)
-    await execa('rm', ['-r', join(outDir, 'checkout')])
   }
+  
+  console.log(`Delete ${join(outDir, 'checkout')}`)
+  await execa('rm', ['-r', join(outDir, 'checkout')])
 })()
 
 async function preprocessMonorepo(path) {
