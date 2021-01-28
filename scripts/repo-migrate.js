@@ -122,8 +122,13 @@ async function cleanPackage(dir) {
   const patterns = [
     '.git',
     '.github',
+    '.travis.yml',
     '.idea',
+    '.vscode',
     'yarn.lock',
+    '.editorconfig',
+    '.gitignore',
+    'CHANGELOG.md',
   ]
   for(const pattern of patterns) {
     try {
