@@ -3,6 +3,7 @@ set -euo pipefail
 
 succ="$(pwd)/gen/building-packages.txt"
 fail="$(pwd)/gen/failing-packages.txt"
+incon="$(pwd)/gen/inconclusive-packages.txt" # no package.json or other reason
 
 echo "" > $succ
 echo "" > $fail
@@ -16,6 +17,8 @@ do
     pushd $package > /dev/null
     (yarn --silent && yarn build) && echo $package >> $succ || echo $package >> $fail
     popd > /dev/null
+  else
+    echo $package >> $incon
   fi
 done
 
