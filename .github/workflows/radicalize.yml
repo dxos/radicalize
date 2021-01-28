@@ -31,12 +31,12 @@ jobs:
         working-directory: ./scripts/gen/packages
 
       - name: Upload packages metadata
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
           name: packages-list
           path: ./scripts/gen/*.txt
       - name: Upload the packages bundle
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
           name: packages
           path: ./scripts/gen/packages
