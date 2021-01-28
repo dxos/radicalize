@@ -26,15 +26,15 @@ jobs:
         run: ./build-packages.sh
         working-directory: ./scripts
 
-      - name: Remove .git from bundle before uploading
-        run: rm -r ./**/.git
-        working-directory: ./scripts/gen/packages
-
       - name: Upload packages metadata
         uses: actions/upload-artifact@v2
         with:
           name: packages-list
           path: ./scripts/gen/*.txt
+
+      - name: Remove redundant files from bundle before uploading
+        run: rm -r ./**/{.git,node_modules}
+        working-directory: ./scripts/gen/packages
       - name: Upload the packages bundle
         uses: actions/upload-artifact@v2
         with:
