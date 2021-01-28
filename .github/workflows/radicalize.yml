@@ -18,19 +18,23 @@ jobs:
       - name: Generate a list of dxos repositories
         run: ./repo-list.sh dxos
         working-directory: ./scripts
-      - name: Upload the packages list manifest
-        uses: actions/upload-artifact@v1
-        with:
-          name: packages-list
-          path: ./scripts/gen/dxos.txt
 
       - name: Prepare the repositories for importing into radicle
         run: ./repo-migrate.js
+        working-directory: ./scripts
+      - name: Build packages
+        run: ./build-packages.sh
         working-directory: ./scripts
 
       - name: Remove .git from bundle before uploading
         run: rm -r ./**/.git
         working-directory: ./scripts/gen/packages
+
+      - name: Upload packages metadata
+        uses: actions/upload-artifact@v1
+        with:
+          name: packages-list
+          path: ./scripts/gen/*.txt
       - name: Upload the packages bundle
         uses: actions/upload-artifact@v1
         with:
