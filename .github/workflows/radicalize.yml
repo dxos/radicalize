@@ -16,7 +16,7 @@ jobs:
           git config --global user.email "npm@dxos.org"
           git config --global user.name "DXOS"
           gh alias set repos "$(cat ./gh-alias-repos.txt)"
-          echo ${{ secrets.DXOS_ACCESS_TOKEN }} | gh auth login --with-token
+          echo ${{ github.token }} | gh auth login --with-token
       - name: Generate a list of dxos repositories
         run: ./repo-list.sh dxos
         working-directory: ./scripts
