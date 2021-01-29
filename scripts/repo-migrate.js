@@ -155,6 +155,9 @@ async function cleanPackage(dir) {
     '.editorconfig',
     '.gitignore',
     'CHANGELOG.md',
+    'README.md',
+    'README',
+    'docs'
   ]
   for(const pattern of patterns) {
     try {
