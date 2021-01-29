@@ -4,7 +4,7 @@ on:
 
 jobs:
   radicalize:
-    timeout-minutes: 120
+    timeout-minutes: 180
     runs-on: ubuntu-latest
 
     steps:
