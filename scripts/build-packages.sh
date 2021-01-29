@@ -16,6 +16,7 @@ do
     echo -e "\nBuilding $package"
     pushd $package > /dev/null
     (yarn --silent && yarn build) && echo $package >> $succ || echo $package >> $fail
+    rm -rf node_modules # Remove modules after build step to save space
     popd > /dev/null
   else
     echo $package >> $incon
