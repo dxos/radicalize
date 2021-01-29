@@ -5,8 +5,8 @@ succ="$(pwd)/gen/building-packages.txt"
 fail="$(pwd)/gen/failing-packages.txt"
 incon="$(pwd)/gen/inconclusive-packages.txt" # no package.json or other reason
 
-echo "" > $succ
-echo "" > $fail
+rm -f $succ $fail $incon
+touch $succ $fail $incon
 
 pushd gen/packages > /dev/null
 

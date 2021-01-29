@@ -4,7 +4,7 @@ on:
 
 jobs:
   radicalize:
-    timeout-minutes: 45
+    timeout-minutes: 120
     runs-on: ubuntu-latest
 
     steps:
@@ -31,6 +31,9 @@ jobs:
         run: ./build-packages.sh
         working-directory: ./scripts
 
+      - name: Display the count of building/failing packages
+        run: wc -l ./*.txt
+        working-directory: ./scripts/gen
       - name: Upload packages metadata
         uses: actions/upload-artifact@v2
         with:
