@@ -66,7 +66,8 @@ const replacements = [
 })()
 
 async function preprocessMonorepo(path) {
-  for(const package of await getWorkspacePackages(path)) {
+  const workspacePackages = await getWorkspacePackages(path)
+  for(const package of workspacePackages) {
     const pkgPath = join(path, package.location);
     if(fs.existsSync(join(pkgPath, 'tsconfig.json'))) {
       let tsConfig = readJsonFile(join(pkgPath, 'tsconfig.json'))
@@ -89,6 +90,21 @@ async function preprocessMonorepo(path) {
       writeJsonFile(join(pkgPath, 'tsconfig.json'), tsConfig)
     }
   }
+
+  const { dependencies, devDependencies } = readJsonFile(join(path, 'package.json'))
+  for(const package of workspacePackages) {
+    const pkgPath = join(path, package.location);
+    const pkgJson = readJsonFile(join(pkgPath, 'package.json'))
+    pkgJson.dependencies = {
+      ...dependencies,
+      ...pkgJson.dependencies,
+    }
+    pkgJson.devDependencies = {
+      ...devDependencies,
+      ...pkgJson.devDependencies,
+    }
+    writeJsonFile(join(pkgPath, 'package.json'), pkgJson)
+  }
 }
 
 async function processPackage(sourcePath, name) {
@@ -100,7 +116,7 @@ async function processPackage(sourcePath, name) {
 
   console.log(`Replace licence ${name}`)
   await execa('rm', ['-f', './LICENSE'], { cwd: packagePath })
-  await execa('cp', ['../../../../LICENSE', './'], { cwd: packagePath })
+  await execa('cp', [join(__dirname, '../LICENSE'), './'], { cwd: packagePath })
 
   console.log(`Clean ${name}`)
   await cleanPackage(packagePath)
