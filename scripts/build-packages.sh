@@ -14,10 +14,11 @@ for package in ./*
 do
   if test -f "$package/package.json"; then
     echo -e "\nBuilding $package"
-    pushd $package > /dev/null
+    cp -r $package "${package}_TEMP"
+    pushd "${package}_TEMP" > /dev/null
     (yarn --silent && yarn build) && echo $package >> $succ || echo $package >> $fail
-    rm -rf node_modules # Remove modules after build step to save space
     popd > /dev/null
+    rm -rf "${package}_TEMP"
   else
     echo $package >> $incon
   fi
