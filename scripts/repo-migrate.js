@@ -20,6 +20,20 @@ const replacements = [
   {search: /wns/g, replace: 'dxns'},
 ]
 
+const jsComment = `
+//
+// Copyright 2020 DXOS.org
+//
+`.trim() + '\n\n'
+
+const licenseComments = {
+  '.js': jsComment,
+  '.jsx': jsComment,
+  '.tsx': jsComment,
+  '.ts': jsComment,
+  '.js': jsComment,
+}
+
 ; (async () => {
 
   const repos = fs.readFileSync(list, { encoding: 'utf-8' }).split('\n').filter(Boolean);
@@ -177,6 +191,14 @@ async function cleanPackage(dir) {
     for (const replacement of replacements) {
       cleanedContents = cleanedContents.replace(replacement.search, replacement.replace);
     }
+
+    for(const [ext, comment] of Object.entries(licenseComments)) {
+      if(file.endsWith(ext)) {
+        cleanedContents = comment + cleanedContents;
+        break;
+      }
+    }
+
     if(cleanedContents !== contents) {
       fs.writeFileSync(file, cleanedContents);
     }
