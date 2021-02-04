@@ -58,45 +58,61 @@ const cleanPatterns = [
   await execa('rm', ['-r', join(outDir, 'checkout')]).catch(() => {})
   mkdirp.sync(join(outDir, 'checkout'))
 
-  for(let i = 0; i < repos.length; i++) {
-    const repo = repos[i];
-    try {
+  const threads = 4;
+
+  const repoCount = repos.length;
+  async function startThread() {
+    while (repos.length !== 0) {
+      const idx = repoCount - repos.length;
+      const repo = repos.shift();
       const destination = join(outDir, 'checkout', repo.split('/')[1])
-      console.log(`Clone ${repo} [${i + 1} out of ${repos.length}]`)
-      if (process.env.GITHUB_ACCESS_TOKEN) {
-        await execa('git', ['clone',
-        `https://${process.env.GITHUB_ACCESS_TOKEN}@github.com/${repo}.git`,
-        destination, '--depth=1'])
-      } else {
-        await execa('gh', ['repo', 'clone', repo, destination, '--', '--depth=1'])
-      }
-
-      if (!fs.existsSync(join(destination, 'package.json'))) {
-        await processPackage(destination, repo.replace('dxos/', ''))
-        continue;
-      }
-
-      const rootPkgJson = readJsonFile(join(destination, 'package.json'))
-
-      if(rootPkgJson.workspaces)  {
-        await preprocessMonorepo(destination);
-
-        const packages = await getWorkspacePackages(destination);
-        for(const package of packages) {
-          await processPackage(join(destination, package.location), package.name)
-        }
-      } else {
-        await processPackage(destination, rootPkgJson.name)
-      }
-    } catch(err) {
-      console.error(err)
+      console.log(`Clone ${repo} [${idx + 1} out of ${repos.length}]`)
+      await cloneAndProcessRepo(repo, destination)
     }
-
   }
+
+  const promises = []
+  for(let i = 0; i < threads; i++) {
+    promises.push(startThread());
+  }
+
+  await Promise.all(promises)
 
   console.log(`Delete ${join(outDir, 'checkout')}`)
   await execa('rm', ['-r', join(outDir, 'checkout')])
 })()
+
+async function cloneAndProcessRepo(repo, destination) {
+  try {
+    if (process.env.GITHUB_ACCESS_TOKEN) {
+      await execa('git', ['clone',
+      `https://${process.env.GITHUB_ACCESS_TOKEN}@github.com/${repo}.git`,
+      destination, '--depth=1'])
+    } else {
+      await execa('gh', ['repo', 'clone', repo, destination, '--', '--depth=1'])
+    }
+
+    if (!fs.existsSync(join(destination, 'package.json'))) {
+      await processPackage(destination, repo.replace('dxos/', ''))
+      return;
+    }
+
+    const rootPkgJson = readJsonFile(join(destination, 'package.json'))
+
+    if(rootPkgJson.workspaces)  {
+      await preprocessMonorepo(destination);
+
+      const packages = await getWorkspacePackages(destination);
+      for(const package of packages) {
+        await processPackage(join(destination, package.location), package.name)
+      }
+    } else {
+      await processPackage(destination, rootPkgJson.name)
+    }
+  } catch(err) {
+    console.error(err)
+  }
+}
 
 async function preprocessMonorepo(path) {
   const workspacePackages = await getWorkspacePackages(path)
