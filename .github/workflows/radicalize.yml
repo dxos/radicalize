@@ -1,6 +1,6 @@
 name: Radicalize
 on:
-  workflow_dispatch:
+  push:
 
 jobs:
   radicalize:
