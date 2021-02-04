@@ -41,10 +41,11 @@ const licenseComments = {
   await execa('rm', ['-r', join(outDir, 'checkout')]).catch(() => {})
   mkdirp.sync(join(outDir, 'checkout'))
 
-  for(const repo of repos) {
+  for(let i = 0; i < repos.length; i++) {
+    const repo = repos[i];
     try {
       const destination = join(outDir, 'checkout', repo.split('/')[1])
-      console.log(`Clone ${repo}`)
+      console.log(`Clone ${repo} [${i + 1} out of ${repos.length}]`)
       if (process.env.GITHUB_ACCESS_TOKEN) {
         await execa('git', ['clone',
         `https://${process.env.GITHUB_ACCESS_TOKEN}@github.com/${repo}.git`,
