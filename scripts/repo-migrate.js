@@ -58,7 +58,7 @@ const cleanPatterns = [
   await execa('rm', ['-r', join(outDir, 'checkout')]).catch(() => {})
   mkdirp.sync(join(outDir, 'checkout'))
 
-  const threads = 4;
+  const threads = 8;
 
   const repoCount = repos.length;
   async function startThread() {
@@ -205,8 +205,8 @@ async function cleanPackage(dir) {
   // strip comments
   await execa(require.resolve('@dxos/fu/bin/fu.js'), ['strip', "--dir='**/+\(src\|stories\|tests\)'", '--replace', '--verbose'], { cwd: dir })
 
-  for(const file of readFilesRecursively(dir)) {
-    const contents = fs.readFileSync(file, { encoding: 'utf-8' })
+  for await (const file of readFilesRecursively(dir)) {
+    const contents = await fs.promises.readFile(file, { encoding: 'utf-8' })
     let cleanedContents = contents;
     for (const replacement of replacements) {
       cleanedContents = cleanedContents.replace(replacement.search, replacement.replace);
@@ -220,13 +220,13 @@ async function cleanPackage(dir) {
     }
 
     if(cleanedContents !== contents) {
-      fs.writeFileSync(file, cleanedContents);
+      await fs.promises.writeFile(file, cleanedContents);
     }
   }
 }
 
-function* readFilesRecursively(dir) {
-  for(const filesName of fs.readdirSync(dir)) {
+async function* readFilesRecursively(dir) {
+  for(const filesName of await fs.promises.readdir(dir)) {
     if(fs.statSync(join(dir, filesName)).isDirectory()) {
       yield* readFilesRecursively(join(dir, filesName));
     } else {
