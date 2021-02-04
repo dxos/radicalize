@@ -23,7 +23,7 @@ const replacements = [
 
 const jsComment = `
 //
-// Copyright 2020 DXOS.org
+// Copyright 2020 wireline.io
 //
 `.trim() + '\n\n'
 
