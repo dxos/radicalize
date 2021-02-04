@@ -12,6 +12,7 @@ const [
 ] = process.argv.slice(2)
 
 const replacements = [
+  {search: /[a-zA-Z0-9\.]+dxos\.network/dxos/g, replace: 'localhost'},
   {search: /[a-zA-Z0-9\.]+dxos\.network/g, replace: 'localhost'},
   {search: /kube.local/g, replace: 'localhost'},
   // {search: /wireline/g, replace: 'dxos'},
