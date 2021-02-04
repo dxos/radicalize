@@ -19,6 +19,8 @@ const replacements = [
   {search: /dx/g, replace: 'wire'},
   {search: /dxn/g, replace: 'wrn'},
   {search: /dxns/g, replace: 'wns'},
+  // The following replaces any dependencies to be a '*' version, so that 'yarn install' works.
+  {search: /(?<=.*\@wirelineio\/.*": ")(.*)(?=".*)/g, replace: '*'},
 ]
 
 const jsComment = `

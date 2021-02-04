@@ -9,6 +9,7 @@ rm -f $succ $fail $incon
 touch $succ $fail $incon
 
 pushd gen/packages > /dev/null
+yarn
 
 for package in ./*
 do

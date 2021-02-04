@@ -27,18 +27,20 @@ jobs:
       - name: Prepare the repositories for importing into radicle
         run: GITHUB_ACCESS_TOKEN="${{ secrets.DXOS_ACCESS_TOKEN }}" ./repo-migrate.js
         working-directory: ./scripts
-      # - name: Build packages
-      #   run: ./build-packages.sh
-      #   working-directory: ./scripts
+      - name: Build packages
+        run: |
+          cp gen.package.json gen/package.json
+          ./build-packages.sh
+        working-directory: ./scripts
 
-      # - name: Display the count of building/failing packages
-      #   run: wc -l ./*.txt
-      #   working-directory: ./scripts/gen
-      # - name: Upload packages metadata
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: packages-list
-      #     path: ./scripts/gen/*.txt
+      - name: Display the count of building/failing packages
+        run: wc -l ./*.txt
+        working-directory: ./scripts/gen
+      - name: Upload packages metadata
+        uses: actions/upload-artifact@v2
+        with:
+          name: packages-list
+          path: ./scripts/gen/*.txt
 
       - name: Remove redundant files from bundle before uploading
         run: rm -r ./**/{.git,node_modules}
