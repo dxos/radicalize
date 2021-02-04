@@ -35,6 +35,22 @@ const licenseComments = {
   '.js': jsComment,
 }
 
+const cleanPatterns = [
+  '.git',
+  '.github',
+  '.travis.yml',
+  '.idea',
+  '.vscode',
+  'yarn.lock',
+  '.editorconfig',
+  '.gitignore',
+  'CHANGELOG.md',
+  'README.md',
+  'README',
+  'docs',
+  'node_modules'
+]
+
 ; (async () => {
 
   const repos = fs.readFileSync(list, { encoding: 'utf-8' }).split('\n').filter(Boolean);
@@ -162,21 +178,7 @@ function cleanPkgName(name) {
 }
 
 async function cleanPackage(dir) {
-  const patterns = [
-    '.git',
-    '.github',
-    '.travis.yml',
-    '.idea',
-    '.vscode',
-    'yarn.lock',
-    '.editorconfig',
-    '.gitignore',
-    'CHANGELOG.md',
-    'README.md',
-    'README',
-    'docs'
-  ]
-  for(const pattern of patterns) {
+  for(const pattern of cleanPatterns) {
     try {
       await execa('rm', ['-r', pattern], { cwd: dir });
     } catch(err) {
