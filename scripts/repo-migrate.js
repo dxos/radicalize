@@ -14,10 +14,10 @@ const [
 const replacements = [
   {search: /[a-zA-Z0-9\.]+dxos\.network/g, replace: 'localhost'},
   {search: /kube.local/g, replace: 'localhost'},
-  // {search: /wireline/g, replace: 'dxos'},
-  // {search: /wire/g, replace: 'dx'},
-  // {search: /wrn/g, replace: 'dxn'},
-  // {search: /wns/g, replace: 'dxns'},
+  {search: /dxos/g, replace: 'wirelineio'},
+  {search: /dx/g, replace: 'wire'},
+  {search: /dxn/g, replace: 'wrn'},
+  {search: /dxns/g, replace: 'wns'},
 ]
 
 const jsComment = `
