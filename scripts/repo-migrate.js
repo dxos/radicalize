@@ -66,7 +66,7 @@ const cleanPatterns = [
       const idx = repoCount - repos.length;
       const repo = repos.shift();
       const destination = join(outDir, 'checkout', repo.split('/')[1])
-      console.log(`Clone ${repo} [${idx + 1} out of ${repos.length}]`)
+      console.log(`Clone ${repo} [${idx + 1} out of ${repoCount}]`)
       await cloneAndProcessRepo(repo, destination)
     }
   }
